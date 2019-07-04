@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.joy.mapper.UsersMapper">
+
+	<resultMap type="com.cy.joy.pojo.Users" id="BaseUsersMap">
+		<id property="userId" column="user_id"/>
+		<result property="userName" column="user_name"/>
+		<result property="userPass" column="user_pass"/>
+		<result property="userPhone" column="user_phone"/>
+		<result property="userEmail" column="user_email"/>
+		<result property="userState" column="user_state"/>
+		<result property="userImg" column="user_img"/>
+		<result property="openId" column="open_id"/>
+	</resultMap>
+
+	<select id="getOpenId" resultMap="BaseUsersMap">
+		select user_id,open_id,user_state from users where open_id = #{openId}
+	</select>
+
+	<insert id="addUser">
+		insert into users (user_name,user_img,open_id) values (#{user.userName},#{user.userImg},#{user.openId})
+	</insert>
+
+	<update id="deleteUser">
+		update users set user_state = -1 where open_id = #{openId}
+	</update>
+
+	<update id="recoverUser">
+		update users set user_state = 1 where open_id = #{openId}
+	</update>
+
+</mapper>

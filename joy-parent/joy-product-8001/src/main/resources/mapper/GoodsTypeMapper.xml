@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.joy.mapper.GoodsTypeMapper">
+
+    <resultMap type="com.cy.joy.pojo.GoodsType" id="BaseGoodsType">
+        <id property="typeId" column="type_id" />
+        <result property="typeName" column="type_name" />
+        <result property="typePid" column="type_pid" />
+        <result property="typeLv"  column="type_lv" />
+        <result property="typePath"  column="type_path" />
+        <result property="typeState"  column="type_state" />
+    </resultMap>
+
+    <select id="list" resultMap="BaseGoodsType">
+        select a.* from goods_type a
+        inner join goods b
+        on a.type_Id = b.goods_Type
+        group by b.goods_Type
+        order by b.goods_Type;
+    </select>
+
+</mapper>
