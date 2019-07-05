@@ -15,6 +15,9 @@ eureka:
 
 zuul:
   retryable: true
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
   routes:
     joy-product:
       path: /joy-product/**
@@ -28,6 +31,18 @@ zuul:
     joy-user:
       path: /joy-user/**
       serviceId: joy-user
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 
 info:
   app.name: cy-joy

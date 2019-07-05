@@ -152,6 +152,16 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
+     * 清空所有
+     * @param userId
+     */
+    @Override
+    public void clearCartService(String userId) {
+        Jedis jedis = jedisPool.getResource();
+        jedis.del(userId);
+    }
+
+    /**
      * 返回购物车信息
      * @param map
      * @param list
@@ -170,16 +180,6 @@ public class CartServiceImpl implements CartService {
             list.add(cartVo);
         }
         return list;
-    }
-
-    /**
-     * 清空所有
-     * @param userId
-     */
-    @Override
-    public void clearCartService(String userId) {
-        Jedis jedis = jedisPool.getResource();
-        jedis.del(userId);
     }
 
 }
