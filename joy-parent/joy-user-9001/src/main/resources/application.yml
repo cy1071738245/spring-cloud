@@ -17,6 +17,7 @@ spring:
       test-on-borrow: true
   redis:
     host: 127.0.0.1
+    port: 6379
 
 mybatis:
   config-location: classpath:mapper/config/mybatis-config.xml

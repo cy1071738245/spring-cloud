@@ -16,5 +16,6 @@ public class CartVo {
     private Integer proNumber;
     private Double proTotalPrice;
     private Double proPrice;
+    private Integer currentUserId;
 
 }

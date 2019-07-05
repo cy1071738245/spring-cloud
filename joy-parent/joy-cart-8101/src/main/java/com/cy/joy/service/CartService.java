@@ -8,6 +8,12 @@ public interface CartService {
 
     List<CartVo> MergerOfCartsService(List<CartVo> carts, Integer userId);
 
-    List<CartVo> addCount(Integer cartId);
+    List<CartVo> addCountService(Integer cartId, String userId);
+
+    List<CartVo> subCountService(Integer cartId, String userId);
+
+    List<CartVo> addCartService(CartVo cartVo);
+
+    void clearCartService(String userId);
 
 }

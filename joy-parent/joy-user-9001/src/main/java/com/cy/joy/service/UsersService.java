@@ -23,4 +23,18 @@ public interface UsersService {
      */
     void recoverUserService(String openId);
 
+    /**
+     * 从redis取出用户信息
+     * @param code
+     * @return
+     */
+    Users getUserInRedis(String code);
+
+    /**
+     * 授权后用户信息保存
+     * @param code
+     * @param user
+     */
+    void setUserInRedis(String code, Users user);
+
 }

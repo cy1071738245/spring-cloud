@@ -41,16 +41,28 @@ public class CallBackController {
     @PostMapping("/wxCallBack")
     public ResultVo<List<CartVo>> wxCallBack(@RequestBody LoginParams loginParams) throws WxErrorException {
         ResultVo<List<CartVo>> resultVo = new ResultVo<>();
+        //判断是否已授权
+        if(this.isGranted(loginParams.getCode()) != null){
+            Users user = this.isGranted(loginParams.getCode());
+            List<CartVo> result = cartClientService.MergerOfCartsService(loginParams.getCarts(), user.getUserId());
+            resultVo.setCode(ResultState.SUCCESS.getCode())
+                    .setMsg("已登录")
+                    .setCurrentUserId(user.getUserId())
+                    .setResult(result);
+            return resultVo;
+        }
         //使用code换取token
         WxMpOAuth2AccessToken oAuth2AccessToken = wxMpService.oauth2getAccessToken(loginParams.getCode());
         //使用token换取用户信息
         WxMpUser wxMpUser = wxMpService.oauth2getUserInfo(oAuth2AccessToken, "zh_CN");
         Users user = usersService.getOpenIdService(wxMpUser.getOpenId());
         if(user != null && user.getUserState() == UsersState.NORMAL.getCode()){
+            this.saveInRedis(loginParams.getCode(), user);
             //购物车数据同步
             List<CartVo> result = cartClientService.MergerOfCartsService(loginParams.getCarts(), user.getUserId());
             resultVo.setCode(ResultState.SUCCESS.getCode())
                     .setMsg("登录成功")
+                    .setCurrentUserId(user.getUserId())
                     .setResult(result);
             return resultVo;
         }else if(user != null && user.getUserState() == UsersState.FORBIDDEN.getCode()){
@@ -59,17 +71,43 @@ public class CallBackController {
             return resultVo;
         }else if(user != null && user.getUserState() == UsersState.DELETE.getCode()){
             usersService.recoverUserService(wxMpUser.getOpenId());
+            this.saveInRedis(loginParams.getCode(), user);
             resultVo.setCode(ResultState.SUCCESS.getCode())
-                    .setMsg("已成功为您注册");
+                    .setMsg("已成功为您注册")
+                    .setCurrentUserId(user.getUserId());
             return resultVo;
         }else {
             usersService.addUserService(new Users().setUserName(wxMpUser.getNickname())
                     .setUserImg(wxMpUser.getHeadImgUrl())
                     .setOpenId(wxMpUser.getOpenId()));
+            this.saveInRedis(loginParams.getCode(), user);
             resultVo.setCode(ResultState.SUCCESS.getCode())
-                    .setMsg("已成功为您注册");
+                    .setMsg("已成功为您注册")
+                    .setCurrentUserId(user.getUserId());
             return resultVo;
         }
+    }
+
+    /**
+     * 检测是否已经授权
+     * @param code
+     * @return
+     */
+    private Users isGranted(String code){
+        Users user = usersService.getUserInRedis(code);
+        if(user != null){
+            return user;
+        }
+        return null;
+    }
+
+    /**
+     * 授权后用户信息保存
+     * @param code
+     * @param user
+     */
+    private void saveInRedis(String code, Users user){
+        usersService.setUserInRedis(code,user);
     }
 
 }

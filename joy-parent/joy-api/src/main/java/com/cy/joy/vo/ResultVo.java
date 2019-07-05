@@ -17,6 +17,7 @@ public class ResultVo<T> {
 
     private Integer code;
     private String msg;
+    private Integer currentUserId;
     private T result;
 
 }
