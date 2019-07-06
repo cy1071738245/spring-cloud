@@ -19,3 +19,7 @@ function login(params){
 function addCart(params){
 	return axios.post("/joy-cart/cart/addCart", params);
 }
+
+function getOrder(userId){
+	return axios.post("/joy-order/order/get", {"userId":userId});
+}

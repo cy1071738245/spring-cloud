@@ -83,4 +83,14 @@ public class CartController {
         cartService.clearCartService(userId);
     }
 
+    /**
+     * 获取购物车信息
+     * @param userId
+     * @return
+     */
+    @GetMapping("/get")
+    public List<CartVo> get(@RequestParam("userId") Integer userId){
+        return cartService.getService(userId);
+    }
+
 }

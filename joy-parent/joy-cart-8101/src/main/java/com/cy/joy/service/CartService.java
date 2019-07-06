@@ -16,4 +16,6 @@ public interface CartService {
 
     void clearCartService(String userId);
 
+    List<CartVo> getService(Integer userId);
+
 }

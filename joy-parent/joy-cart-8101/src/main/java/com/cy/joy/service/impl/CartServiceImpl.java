@@ -162,6 +162,18 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
+     * 获取购物车信息
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<CartVo> getService(Integer userId) {
+        Jedis jedis = jedisPool.getResource();
+        Map<String,String> map = jedis.hgetAll(String.valueOf(userId));
+        return this.returnCartInfo(map, new ArrayList<>());
+    }
+
+    /**
      * 返回购物车信息
      * @param map
      * @param list

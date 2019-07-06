@@ -32,13 +32,20 @@ eureka:
     instance-id: joy-cart-8101
     prefer-ip-address: true
 
-feign:
-  hystrix:
-    enabled: false
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 6000
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 
 info:
   app.name: cy-joy
   company.name: www.cy.com
   build.artifactId: $project.artifactId$
   build.version: $project.version$
-

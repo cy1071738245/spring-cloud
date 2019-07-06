@@ -333,65 +333,67 @@
 <script src="js/mock-min.js"></script>
 <script src="js/mock.js"></script>
 <script>
-	$(function(){
-		//展示购物车
-		if(sessionStorage.getItem("isLogin") == 0){
-			if(sessionStorage.getItem("userCarts") != null){
-				var carts = sessionStorage.getItem("userCarts");
-				carts = JSON.parse(carts);
-				var taste = $(".subChose .m-active").text();
-				var cartsTotalPrice = 0;
-				var cartsTotalCount = 0;
-				for(let i = 0; i < carts.length; i++) {
-					var addtr = '<li class="food">';
-					addtr += '<div><span class="accountName">'+carts[i].proName+'</span><span class="taste">'+taste+'</span></div>';
-					addtr += '<div><span>￥</span><span class="accountPrice">'+carts[i].proTotalPrice+'</span></div>';
-					addtr += '<div class="btn">';
-					addtr += '<button class="ms2" id="ms2'+carts[i].proId+'" onclick="sub('+carts[i].proId+')" style="display: inline-block;"></button>';
-					addtr += '<i class="li_acount">'+carts[i].proNumber+'</i>';
-					addtr += '<button class="ad2" id="ad2'+carts[i].proId+'" onclick="add('+carts[i].proId+')"></button>';
-					addtr += '<i class="price" style="display: none;">'+carts[i].proPrice+'</i>';
-					addtr += '</div>';
-					addtr += '</li>';
-					$(".list-content ul").append(addtr);
-					cartsTotalCount = cartsTotalCount + parseInt(carts[i].proNumber);
-					cartsTotalPrice = cartsTotalPrice + carts[i].proTotalPrice;
+	$(document).ready(function(){
+		$(function(){
+			//展示购物车
+			if(sessionStorage.getItem("isLogin") == 0){
+				if(sessionStorage.getItem("userCarts") != null){
+					var carts = sessionStorage.getItem("userCarts");
+					carts = JSON.parse(carts);
+					var taste = $(".subChose .m-active").text();
+					var cartsTotalPrice = 0;
+					var cartsTotalCount = 0;
+					for(let i = 0; i < carts.length; i++) {
+						var addtr = '<li class="food">';
+						addtr += '<div><span class="accountName">'+carts[i].proName+'</span><span class="taste">'+taste+'</span></div>';
+						addtr += '<div><span>￥</span><span class="accountPrice">'+carts[i].proTotalPrice+'</span></div>';
+						addtr += '<div class="btn">';
+						addtr += '<button class="ms2" id="ms2'+carts[i].proId+'" onclick="sub('+carts[i].proId+')" style="display: inline-block;"></button>';
+						addtr += '<i class="li_acount">'+carts[i].proNumber+'</i>';
+						addtr += '<button class="ad2" id="ad2'+carts[i].proId+'" onclick="add('+carts[i].proId+')"></button>';
+						addtr += '<i class="price" style="display: none;">'+carts[i].proPrice+'</i>';
+						addtr += '</div>';
+						addtr += '</li>';
+						$(".list-content ul").append(addtr);
+						cartsTotalCount = cartsTotalCount + parseInt(carts[i].proNumber);
+						cartsTotalPrice = cartsTotalPrice + carts[i].proTotalPrice;
+					}
+					$("#totalcountshow").html(cartsTotalCount);
+					$("#totalpriceshow").html(cartsTotalPrice);
+				};
+				if(sessionStorage.getItem("userCarts") == null){
+					$(".right").find("a").addClass("disable");
 				}
-				$("#totalcountshow").html(cartsTotalCount);
-				$("#totalpriceshow").html(cartsTotalPrice);
-			};
-			if(sessionStorage.getItem("userCarts") == null){
-				$(".right").find("a").addClass("disable");
-			}
-		}else{
-			if(localStorage.getItem("carts") != null){
-				var carts = localStorage.getItem("carts");
-				carts = JSON.parse(carts);
-				var taste = $(".subChose .m-active").text();
-				var cartsTotalPrice = 0;
-				var cartsTotalCount = 0;
-				for(let i = 0; i < carts.length; i++) {
-					var addtr = '<li class="food">';
-					addtr += '<div><span class="accountName">'+carts[i].proName+'</span><span class="taste">'+taste+'</span></div>';
-					addtr += '<div><span>￥</span><span class="accountPrice">'+carts[i].proTotalPrice+'</span></div>';
-					addtr += '<div class="btn">';
-					addtr += '<button class="ms2" id="ms2'+carts[i].proId+'" onclick="sub('+carts[i].proId+')" style="display: inline-block;"></button>';
-					addtr += '<i class="li_acount">'+carts[i].proNumber+'</i>';
-					addtr += '<button class="ad2" id="ad2'+carts[i].proId+'" onclick="add('+carts[i].proId+')"></button>';
-					addtr += '<i class="price" style="display: none;">'+carts[i].proPrice+'</i>';
-					addtr += '</div>';
-					addtr += '</li>';
-					$(".list-content ul").append(addtr);
-					cartsTotalCount = cartsTotalCount + parseInt(carts[i].proNumber);
-					cartsTotalPrice = cartsTotalPrice + carts[i].proTotalPrice;
+			}else{
+				if(localStorage.getItem("carts") != null){
+					var carts = localStorage.getItem("carts");
+					carts = JSON.parse(carts);
+					var taste = $(".subChose .m-active").text();
+					var cartsTotalPrice = 0;
+					var cartsTotalCount = 0;
+					for(let i = 0; i < carts.length; i++) {
+						var addtr = '<li class="food">';
+						addtr += '<div><span class="accountName">'+carts[i].proName+'</span><span class="taste">'+taste+'</span></div>';
+						addtr += '<div><span>￥</span><span class="accountPrice">'+carts[i].proTotalPrice+'</span></div>';
+						addtr += '<div class="btn">';
+						addtr += '<button class="ms2" id="ms2'+carts[i].proId+'" onclick="sub('+carts[i].proId+')" style="display: inline-block;"></button>';
+						addtr += '<i class="li_acount">'+carts[i].proNumber+'</i>';
+						addtr += '<button class="ad2" id="ad2'+carts[i].proId+'" onclick="add('+carts[i].proId+')"></button>';
+						addtr += '<i class="price" style="display: none;">'+carts[i].proPrice+'</i>';
+						addtr += '</div>';
+						addtr += '</li>';
+						$(".list-content ul").append(addtr);
+						cartsTotalCount = cartsTotalCount + parseInt(carts[i].proNumber);
+						cartsTotalPrice = cartsTotalPrice + carts[i].proTotalPrice;
+					}
+					$("#totalcountshow").html(cartsTotalCount);
+					$("#totalpriceshow").html(cartsTotalPrice);
+				};
+				if(localStorage.getItem("carts") == null){
+					$(".right").find("a").addClass("disable");
 				}
-				$("#totalcountshow").html(cartsTotalCount);
-				$("#totalpriceshow").html(cartsTotalPrice);
-			};
-			if(localStorage.getItem("carts") == null){
-				$(".right").find("a").addClass("disable");
 			}
-		}
+		});
 	});
 	//减少购物车商品数量
 	function sub(id){
@@ -662,7 +664,6 @@
 				sessionStorage.setItem("isLogin", res.data.code);
 				sessionStorage.setItem("userId", res.data.currentUserId);
 				localStorage.removeItem("carts");
-				window.location.reload();
 			});
 		},
 	})
