@@ -21,7 +21,7 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType;
 @Component
 public class MsgHandler extends AbstractHandler {
 
-    private static final String URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxee335ca9d1cf9d9f&redirect_uri=http%3a%2f%2fvf3fsd.natappfree.cc&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+    private static final String URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxee335ca9d1cf9d9f&redirect_uri=http%3a%2f%2fd84vks.natappfree.cc&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,

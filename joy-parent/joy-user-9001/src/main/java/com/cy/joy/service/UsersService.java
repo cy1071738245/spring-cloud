@@ -37,4 +37,11 @@ public interface UsersService {
      */
     void setUserInRedis(String code, Users user);
 
+    /**
+     * 根据id获取用户
+     * @param userId
+     * @return
+     */
+    Users getService(Integer userId);
+
 }

@@ -32,6 +32,15 @@ eureka:
     instance-id: joy-user-9001
     prefer-ip-address: true
 
+#负载均衡配置
+ribbon:
+  ConnectTimeout: 30000
+  ReadTimeout: 120000
+  OkToRetryOnAllOperations: true
+  MaxAutoRetriesNextServer: 2
+  MaxAutoRetries: 1
+
+#熔断的延迟时间
 hystrix:
   command:
     default:
@@ -39,13 +48,6 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 600000
-
-ribbon:
-  ConnectTimeout: 30000 # 连接超时时间(ms)
-  ReadTimeout: 120000 # 通信超时时间(ms)
-  OkToRetryOnAllOperations: true # 是否对所有操作重试
-  MaxAutoRetriesNextServer: 1 # 同一服务不同实例的重试次数
-  MaxAutoRetries: 1 # 同一实例的重试次数
 
 info:
   app.name: cy-joy
@@ -60,3 +62,11 @@ wx:
         secret: 91dbfd4ecad98810332f601468b88bb5
         token: cytoken
         aesKey:
+
+#自定义内容
+sc:
+  jwt:
+    secret: sc@Login(Auth}*^31)&czxy% # 登录校验的密钥
+    pubKeyPath: D:/rsa/rsa.pub # 公钥地址
+    priKeyPath: D:/rsa/rsa.pri # 私钥地址
+    expire: 30 # 过期时间,单位分钟

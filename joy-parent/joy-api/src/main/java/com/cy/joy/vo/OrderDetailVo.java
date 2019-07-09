@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class OrderDetailVo {
 
+    private Integer orderDetailGoodId;
     private String orderDetailName;
     private Integer orderDetailNum;
     private Double orderDetailPrice;

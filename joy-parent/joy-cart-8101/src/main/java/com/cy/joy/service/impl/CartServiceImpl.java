@@ -17,13 +17,12 @@ import java.util.*;
 public class CartServiceImpl implements CartService {
 
     @Autowired
-    private CartMapper cartMapper;
-
+    private GoodsClientService goodsClientService;
     @Autowired
     private JedisPool jedisPool;
-
     @Autowired
-    private GoodsClientService goodsClientService;
+    private CartMapper cartMapper;
+
 
     /**
      * 购物车数据合并

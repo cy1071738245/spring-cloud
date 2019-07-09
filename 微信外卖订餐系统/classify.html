@@ -285,7 +285,7 @@
 		            <img src="images/close.png" alt="">
 		        </a>
 		        <dl class="subName">
-		            <dt><img class="imgPhoto" src="images/demo.jpg"></dt>
+		            <dt><img class="imgPhoto" src=""></dt>
 		            <dd>
 		                <p data-icon=""></p>
 		                <p><span>¥ </span><span class="pce"></span></p>
@@ -333,68 +333,6 @@
 <script src="js/mock-min.js"></script>
 <script src="js/mock.js"></script>
 <script>
-	$(document).ready(function(){
-		$(function(){
-			//展示购物车
-			if(sessionStorage.getItem("isLogin") == 0){
-				if(sessionStorage.getItem("userCarts") != null){
-					var carts = sessionStorage.getItem("userCarts");
-					carts = JSON.parse(carts);
-					var taste = $(".subChose .m-active").text();
-					var cartsTotalPrice = 0;
-					var cartsTotalCount = 0;
-					for(let i = 0; i < carts.length; i++) {
-						var addtr = '<li class="food">';
-						addtr += '<div><span class="accountName">'+carts[i].proName+'</span><span class="taste">'+taste+'</span></div>';
-						addtr += '<div><span>￥</span><span class="accountPrice">'+carts[i].proTotalPrice+'</span></div>';
-						addtr += '<div class="btn">';
-						addtr += '<button class="ms2" id="ms2'+carts[i].proId+'" onclick="sub('+carts[i].proId+')" style="display: inline-block;"></button>';
-						addtr += '<i class="li_acount">'+carts[i].proNumber+'</i>';
-						addtr += '<button class="ad2" id="ad2'+carts[i].proId+'" onclick="add('+carts[i].proId+')"></button>';
-						addtr += '<i class="price" style="display: none;">'+carts[i].proPrice+'</i>';
-						addtr += '</div>';
-						addtr += '</li>';
-						$(".list-content ul").append(addtr);
-						cartsTotalCount = cartsTotalCount + parseInt(carts[i].proNumber);
-						cartsTotalPrice = cartsTotalPrice + carts[i].proTotalPrice;
-					}
-					$("#totalcountshow").html(cartsTotalCount);
-					$("#totalpriceshow").html(cartsTotalPrice);
-				};
-				if(sessionStorage.getItem("userCarts") == null){
-					$(".right").find("a").addClass("disable");
-				}
-			}else{
-				if(localStorage.getItem("carts") != null){
-					var carts = localStorage.getItem("carts");
-					carts = JSON.parse(carts);
-					var taste = $(".subChose .m-active").text();
-					var cartsTotalPrice = 0;
-					var cartsTotalCount = 0;
-					for(let i = 0; i < carts.length; i++) {
-						var addtr = '<li class="food">';
-						addtr += '<div><span class="accountName">'+carts[i].proName+'</span><span class="taste">'+taste+'</span></div>';
-						addtr += '<div><span>￥</span><span class="accountPrice">'+carts[i].proTotalPrice+'</span></div>';
-						addtr += '<div class="btn">';
-						addtr += '<button class="ms2" id="ms2'+carts[i].proId+'" onclick="sub('+carts[i].proId+')" style="display: inline-block;"></button>';
-						addtr += '<i class="li_acount">'+carts[i].proNumber+'</i>';
-						addtr += '<button class="ad2" id="ad2'+carts[i].proId+'" onclick="add('+carts[i].proId+')"></button>';
-						addtr += '<i class="price" style="display: none;">'+carts[i].proPrice+'</i>';
-						addtr += '</div>';
-						addtr += '</li>';
-						$(".list-content ul").append(addtr);
-						cartsTotalCount = cartsTotalCount + parseInt(carts[i].proNumber);
-						cartsTotalPrice = cartsTotalPrice + carts[i].proTotalPrice;
-					}
-					$("#totalcountshow").html(cartsTotalCount);
-					$("#totalpriceshow").html(cartsTotalPrice);
-				};
-				if(localStorage.getItem("carts") == null){
-					$(".right").find("a").addClass("disable");
-				}
-			}
-		});
-	});
 	//减少购物车商品数量
 	function sub(id){
 		var a = parseFloat($("#ms2"+id).siblings(".price").text());  //当前商品单价
@@ -516,7 +454,7 @@
 				$("#btnselect").attr("href", "order_notes.html");
 			}
 		}
-	}
+	};
 </script>
 <script>
 	new Vue({
@@ -543,6 +481,9 @@
 			},
 			loginParams:{
 				code:"",
+			},
+			cartsParams:{
+				token:'',
 				carts:{}
 			}
 		},
@@ -649,21 +590,82 @@
 				this.carts = localStorage.getItem("carts");
 			}
 			this.loginParams.code = params.code;
-			if(localStorage.getItem("carts") != null){
-				this.loginParams.carts = JSON.parse(localStorage.getItem("carts"));
-			}else{
-				this.cart.proId = null;
-				this.cart.proName = null;
-				this.cart.proNumber = null;
-				this.cart.proTotalPrice = null;
-				this.cart.proPrice = null;
-				this.loginParams.carts = [this.cart];
-			}
 			login(this.loginParams).then(res=>{
-				sessionStorage.setItem("userCarts", JSON.stringify(res.data.result));
 				sessionStorage.setItem("isLogin", res.data.code);
 				sessionStorage.setItem("userId", res.data.currentUserId);
-				localStorage.removeItem("carts");
+				localStorage.setItem("token", res.data.result);
+				if(localStorage.getItem("carts") != null){
+					this.cartsParams.carts = JSON.parse(localStorage.getItem("carts"));
+				}else{
+					this.cart.proId = null;
+					this.cart.proName = null;
+					this.cart.proNumber = null;
+					this.cart.proTotalPrice = null;
+					this.cart.proPrice = null;
+					this.cartsParams.carts = [this.cart];
+				}
+				this.cartsParams.token = localStorage.getItem("token");
+				mergerOfCarts(this.cartsParams).then(res=>{
+					sessionStorage.setItem("userCarts", JSON.stringify(res.data.result));
+					if(sessionStorage.getItem("isLogin") == 0){
+						if(sessionStorage.getItem("userCarts") != null){
+							var carts = sessionStorage.getItem("userCarts");
+							carts = JSON.parse(carts);
+							var taste = $(".subChose .m-active").text();
+							var cartsTotalPrice = 0;
+							var cartsTotalCount = 0;
+							for(let i = 0; i < carts.length; i++) {
+								var addtr = '<li class="food">';
+								addtr += '<div><span class="accountName">'+carts[i].proName+'</span><span class="taste">'+taste+'</span></div>';
+								addtr += '<div><span>￥</span><span class="accountPrice">'+carts[i].proTotalPrice+'</span></div>';
+								addtr += '<div class="btn">';
+								addtr += '<button class="ms2" id="ms2'+carts[i].proId+'" onclick="sub('+carts[i].proId+')" style="display: inline-block;"></button>';
+								addtr += '<i class="li_acount">'+carts[i].proNumber+'</i>';
+								addtr += '<button class="ad2" id="ad2'+carts[i].proId+'" onclick="add('+carts[i].proId+')"></button>';
+								addtr += '<i class="price" style="display: none;">'+carts[i].proPrice+'</i>';
+								addtr += '</div>';
+								addtr += '</li>';
+								$(".list-content ul").append(addtr);
+								cartsTotalCount = cartsTotalCount + parseInt(carts[i].proNumber);
+								cartsTotalPrice = cartsTotalPrice + carts[i].proTotalPrice;
+							}
+							$("#totalcountshow").html(cartsTotalCount);
+							$("#totalpriceshow").html(cartsTotalPrice);
+						};
+						if(sessionStorage.getItem("userCarts") == null){
+							$(".right").find("a").addClass("disable");
+						}
+						localStorage.removeItem("carts");
+					}else{
+						if(localStorage.getItem("carts") != null){
+							var carts = localStorage.getItem("carts");
+							carts = JSON.parse(carts);
+							var taste = $(".subChose .m-active").text();
+							var cartsTotalPrice = 0;
+							var cartsTotalCount = 0;
+							for(let i = 0; i < carts.length; i++) {
+								var addtr = '<li class="food">';
+								addtr += '<div><span class="accountName">'+carts[i].proName+'</span><span class="taste">'+taste+'</span></div>';
+								addtr += '<div><span>￥</span><span class="accountPrice">'+carts[i].proTotalPrice+'</span></div>';
+								addtr += '<div class="btn">';
+								addtr += '<button class="ms2" id="ms2'+carts[i].proId+'" onclick="sub('+carts[i].proId+')" style="display: inline-block;"></button>';
+								addtr += '<i class="li_acount">'+carts[i].proNumber+'</i>';
+								addtr += '<button class="ad2" id="ad2'+carts[i].proId+'" onclick="add('+carts[i].proId+')"></button>';
+								addtr += '<i class="price" style="display: none;">'+carts[i].proPrice+'</i>';
+								addtr += '</div>';
+								addtr += '</li>';
+								$(".list-content ul").append(addtr);
+								cartsTotalCount = cartsTotalCount + parseInt(carts[i].proNumber);
+								cartsTotalPrice = cartsTotalPrice + carts[i].proTotalPrice;
+							}
+							$("#totalcountshow").html(cartsTotalCount);
+							$("#totalpriceshow").html(cartsTotalPrice);
+						};
+						if(localStorage.getItem("carts") == null){
+							$(".right").find("a").addClass("disable");
+						}
+					}
+				})
 			});
 		},
 	})

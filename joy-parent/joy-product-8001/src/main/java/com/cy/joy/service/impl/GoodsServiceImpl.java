@@ -8,6 +8,8 @@ import com.cy.joy.pojo.GoodsType;
 import com.cy.joy.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -25,6 +27,7 @@ public class GoodsServiceImpl implements GoodsService {
     private GoodsTypeMapper goodsTypeMapper;
 
     @Override
+    @Transactional(propagation= Propagation.REQUIRED,readOnly=true)
     public List<List<Goods>> listService() {
         Jedis jedis = jedisPool.getResource();
         String jsonStr = jedis.get("all");
@@ -43,6 +46,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    @Transactional(propagation=Propagation.REQUIRED,readOnly=true)
     public Goods getService(Integer goodId) {
         return goodsMapper.get(goodId);
     }

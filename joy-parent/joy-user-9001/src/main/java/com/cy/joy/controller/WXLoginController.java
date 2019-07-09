@@ -1,11 +1,13 @@
 package com.cy.joy.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.cy.joy.config.JwtProperties;
 import com.cy.joy.enums.ResultState;
 import com.cy.joy.enums.UsersState;
+import com.cy.joy.pojo.UserInfo;
 import com.cy.joy.pojo.Users;
-import com.cy.joy.service.CartClientService;
 import com.cy.joy.service.UsersService;
-import com.cy.joy.vo.CartVo;
+import com.cy.joy.util.JwtUtils;
 import com.cy.joy.vo.ResultVo;
 import com.cy.joy.wx.pojo.LoginParams;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -16,20 +18,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 @RestController
-public class CallBackController {
+public class WXLoginController {
 
     @Autowired
     private WxMpService wxMpService;
-
+    @Autowired
+    private JwtProperties jwtProperties;
+    @Autowired
+    private JedisPool jedisPool;
     @Autowired
     private UsersService usersService;
-
-    @Autowired
-    private CartClientService cartClientService;
 
     /**
      * 授权回调登录
@@ -38,31 +40,33 @@ public class CallBackController {
      * @throws WxErrorException
      */
     @PostMapping("/wxCallBack")
-    public ResultVo<List<CartVo>> wxCallBack(@RequestBody LoginParams loginParams) throws WxErrorException {
-        ResultVo<List<CartVo>> resultVo = new ResultVo<>();
+    public ResultVo<String> wxCallBack(@RequestBody LoginParams loginParams) throws Exception {
+        ResultVo<String> resultVo = new ResultVo<>();
         //判断是否已授权
         if(this.isGranted(loginParams.getCode()) != null){
             Users user = this.isGranted(loginParams.getCode());
-            List<CartVo> result = cartClientService.MergerOfCartsService(loginParams.getCarts(), user.getUserId());
+            String token = JwtUtils.generateToken(new UserInfo((long)user.getUserId(), user.getUserName()), jwtProperties.getPrivateKey(), jwtProperties.getExpire());
             resultVo.setCode(ResultState.SUCCESS.getCode())
                     .setMsg("已登录")
                     .setCurrentUserId(user.getUserId())
-                    .setResult(result);
+                    .setResult(token);
             return resultVo;
         }
+        Jedis jedis = jedisPool.getResource();
         //使用code换取token
         WxMpOAuth2AccessToken oAuth2AccessToken = wxMpService.oauth2getAccessToken(loginParams.getCode());
+        oAuth2AccessToken.setExpiresIn(30);
         //使用token换取用户信息
         WxMpUser wxMpUser = wxMpService.oauth2getUserInfo(oAuth2AccessToken, "zh_CN");
         Users user = usersService.getOpenIdService(wxMpUser.getOpenId());
         if(user != null && user.getUserState() == UsersState.NORMAL.getCode()){
             this.saveInRedis(loginParams.getCode(), user);
-            //购物车数据同步
-            List<CartVo> result = cartClientService.MergerOfCartsService(loginParams.getCarts(), user.getUserId());
+            String token = JwtUtils.generateToken(new UserInfo((long)user.getUserId(), user.getUserName()), jwtProperties.getPrivateKey(), jwtProperties.getExpire());
+            jedis.setex(token, 1800, JSON.toJSONString(user));
             resultVo.setCode(ResultState.SUCCESS.getCode())
                     .setMsg("登录成功")
                     .setCurrentUserId(user.getUserId())
-                    .setResult(result);
+                    .setResult(token);
             return resultVo;
         }else if(user != null && user.getUserState() == UsersState.FORBIDDEN.getCode()){
             resultVo.setCode(ResultState.ERROR.getCode())

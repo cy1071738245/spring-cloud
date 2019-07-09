@@ -12,7 +12,7 @@ import java.util.List;
 @FeignClient(value = "JOY-CART")
 public interface CartClientService {
 
-    @PostMapping("/cart/MergerOfCarts")
+    @PostMapping("/cart/mergerOfCarts")
     List<CartVo> MergerOfCartsService(@RequestBody(required = false) List<CartVo> carts, @RequestParam("userId") Integer userId);
 
     @GetMapping("/cart/get")

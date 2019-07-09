@@ -67,8 +67,8 @@
 			</div>
 			<div class="pay_notice">15分钟内未支付系统将自动取消订单</div>
 			<div class="btn">
-				<a href="classify.html"><button class="btn1">取消订单</button></a>
-				<a href="payment.html"><button class="btn2">付款</button></a>
+				<a href="classify.html" @click.prevent="cancel"><button class="btn1">取消订单</button></a>
+				<a @click.prevent="toPay(orderTotalPrice)"><button class="btn2">付款</button></a>
 			</div>
 		</div>
 	</body>
@@ -101,16 +101,42 @@
 			data: {
 				orders:[{}],
 				typeNum:'',
-				orderTotalPrice:''
+				orderTotalPrice:'',
+				orderInfo:{
+					typeNum:'',
+					tableNum:'',
+					diningState:'',
+					tablewareNum:'',
+					remark:'',
+					orderTotalPrice:'',
+					orderDetailList:[{}],
+					token:''
+				},
 			},
 			methods: {
-
+				toPay:function(orderTotalPrice){
+					setOrder(this.orderInfo).then(res=>{
+						if(res.data.code == 0){
+							localStorage.setItem("orderId", res.data.result);
+							sessionStorage.removeItem("userCarts");
+							location.href="payment.html?orderTotalPrice="+orderTotalPrice;
+						}else{
+							alert("token失效")
+						}
+					})
+				},
+				cancel:function(){
+					localStorage.removeItem("orderId");
+					location.href="classify.html";
+				}
 			},
 			created: function() {
 				getOrder(sessionStorage.getItem("userId")).then(res=>{
 					this.orders = res.data.result.orderDetailList;
 					this.typeNum = res.data.result.typeNum;
 					this.orderTotalPrice = res.data.result.orderTotalPrice;
+					this.orderInfo = res.data.result;
+					this.orderInfo.token = localStorage.getItem("token");
 				})
 			}
 		})

@@ -1,36 +1,75 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-<title>支付结果</title>
-<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="css/base.css">
-<link rel="stylesheet" type="text/css" href="css/payment_results.css">
-</head>
-<body>
-<div class="incomplete_order">
-	<p>支付成功</p>
-    <p>60.40</p>
-    <a href="successful_trade.html">查看详情</a>
-</div>
-<div class="main_info">
-    <div class="hang">
-    	<span>门店名称</span>
-        <span>味千拉面（上海长寿路二分店）</span>
-    </div>
-    <div class="hang">
-    	<span>交易时间</span>
-        <span>2018-09-01 12:45:23</span>
-    </div>
-    <div class="hang">
-    	<span>交易订单</span>
-        <span>34324325675987076635</span>
-    </div>
-</div>
-<div class="invoice">
-	<span>点一点，马上开发票</span>
-    <span>开发票</span>
-</div>
-</body>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+		<title>支付结果</title>
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="css/base.css">
+		<link rel="stylesheet" type="text/css" href="css/payment_results.css">
+	</head>
+
+	<body>
+		<div id="app">
+			<div class="incomplete_order">
+				<p>支付成功</p>
+				<p>{{orderTotalPrice}}</p>
+				<a href="successful_trade.html" @click.prevent="detail">查看详情</a>
+			</div>
+			<div class="main_info">
+				<div class="hang">
+					<span>门店名称</span>
+					<span>小煜外卖（上海长寿路二分店）</span>
+				</div>
+				<div class="hang">
+					<span>交易时间</span>
+					<span>{{createTime}}</span>
+				</div>
+				<div class="hang">
+					<span>交易订单</span>
+					<span>{{orderId}}</span>
+				</div>
+			</div>
+			<div class="invoice">
+				<span>点一点，马上开发票</span>
+				<span>开发票</span>
+			</div>
+		</div>
+	</body>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/vuejs-2.5.16.js"></script>
+	<script src="js/axios-0.18.0.js"></script>
+	<script src="js/api.js"></script>
+	<script src="js/mock-min.js"></script>
+	<script src="js/mock.js"></script>
+	<script>
+		new Vue({
+			el: '#app',
+			data: {
+				orderId:'',
+				orderTotalPrice:'',
+				createTime:''
+			},
+			methods: {
+				detail:function(){
+					location.href="successful_trade.html?orderId="+this.orderId;
+				}
+			},
+			created: function() {
+				var url = window.location.search; //获取url中"?"符后的字串   
+		    	var theRequest = new Object();
+		    	if (url.indexOf("?") != -1) {
+			        var str = url.substr(1);
+			        strs = str.split("&");
+			        for (var i = 0; i < strs.length; i++) {
+			          theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+			        }
+				}
+				this.orderId = theRequest['orderId'];
+				this.orderTotalPrice = theRequest['orderTotalPrice'];
+				this.createTime = theRequest['createTime'];
+			}
+		})
+	</script>
 </html>

@@ -1,5 +1,6 @@
 package com.cy.joy.vo;
 
+import com.cy.joy.pojo.Users;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,7 @@ public class OrderVo {
     private String remark;
     private Double orderTotalPrice;
     private List<OrderDetailVo> orderDetailList;
+    private Users orderUser;
+    private String token;
 
 }

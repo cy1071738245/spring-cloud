@@ -14,7 +14,7 @@
 	</resultMap>
 
 	<select id="getOpenId" resultMap="BaseUsersMap">
-		select user_id,open_id,user_state from users where open_id = #{openId}
+		select user_id,user_name,open_id,user_state from users where open_id = #{openId}
 	</select>
 
 	<insert id="addUser">
@@ -28,5 +28,9 @@
 	<update id="recoverUser">
 		update users set user_state = 1 where open_id = #{openId}
 	</update>
+
+	<select id="get" resultMap="BaseUsersMap">
+		select * from users where user_id = #{userId}
+	</select>
 
 </mapper>

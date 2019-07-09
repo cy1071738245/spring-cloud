@@ -32,20 +32,30 @@ eureka:
     instance-id: joy-cart-8101
     prefer-ip-address: true
 
+#负载均衡配置
+ribbon:
+  ConnectTimeout: 30000
+  ReadTimeout: 120000
+  OkToRetryOnAllOperations: true
+  MaxAutoRetriesNextServer: 2
+  MaxAutoRetries: 1
+
+#熔断的延迟时间
 hystrix:
   command:
     default:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 6000
-
-ribbon:
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
+            timeoutInMilliseconds: 600000
 
 info:
   app.name: cy-joy
   company.name: www.cy.com
   build.artifactId: $project.artifactId$
   build.version: $project.version$
+
+#自定义内容
+sc:
+  jwt:
+    pubKeyPath: D:/rsa/rsa.pub # 公钥地址

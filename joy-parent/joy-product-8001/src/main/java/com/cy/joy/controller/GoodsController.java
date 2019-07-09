@@ -16,9 +16,9 @@ import java.util.List;
 public class GoodsController {
 
     @Autowired
-    private GoodsService goodsService;
-    @Autowired
     private DiscoveryClient discoveryClient;
+    @Autowired
+    private GoodsService goodsService;
 
     /**
      * 查询商品列表

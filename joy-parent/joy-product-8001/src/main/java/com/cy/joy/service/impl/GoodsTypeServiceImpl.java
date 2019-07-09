@@ -5,6 +5,8 @@ import com.cy.joy.pojo.GoodsType;
 import com.cy.joy.service.GoodsTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +17,7 @@ public class GoodsTypeServiceImpl implements GoodsTypeService {
     private GoodsTypeMapper goodsTypeMapper;
 
     @Override
+    @Transactional(propagation= Propagation.REQUIRED,readOnly=true)
     public List<GoodsType> listService() {
         return goodsTypeMapper.list();
     }

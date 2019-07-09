@@ -1,7 +1,11 @@
 package com.cy.joy.controller;
 
+import com.cy.joy.config.JwtProperties;
 import com.cy.joy.enums.ResultState;
+import com.cy.joy.pojo.CartsParams;
+import com.cy.joy.pojo.UserInfo;
 import com.cy.joy.service.CartService;
+import com.cy.joy.util.JwtUtils;
 import com.cy.joy.vo.CartVo;
 import com.cy.joy.vo.ResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +18,32 @@ import java.util.List;
 public class CartController {
 
     @Autowired
+    private JwtProperties jwtProperties;
+    @Autowired
     private CartService cartService;
 
     /**
      * 购物车数据合并
-     * @param carts
-     * @param userId
+     * @param cartsParams
      */
-    @PostMapping("/MergerOfCarts")
-    public List<CartVo> MergerOfCarts(@RequestBody(required = false) List<CartVo> carts, @RequestParam("userId") Integer userId){
-        List<CartVo> result = cartService.MergerOfCartsService(carts, userId);
-        return result;
+    @PostMapping("/mergerOfCarts")
+    public ResultVo<List<CartVo>> MergerOfCarts(@RequestBody(required = false) CartsParams cartsParams, @RequestHeader(value = "Authorization", required = false) String token){
+        ResultVo<List<CartVo>> resultVo = new ResultVo<>();
+        //options请求问题未解决
+        token = cartsParams.getToken();
+        UserInfo userInfo = null;
+        try {
+            userInfo = JwtUtils.getInfoFromToken(token, jwtProperties.getPublicKey());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return resultVo.setCode(ResultState.ERROR.getCode())
+                    .setMsg(ResultState.ERROR.getMsg());
+        }
+        List<CartVo> result = cartService.MergerOfCartsService(cartsParams.getCarts(), userInfo.getId().intValue());
+        resultVo.setCode(ResultState.SUCCESS.getCode());
+        resultVo.setMsg(ResultState.SUCCESS.getMsg());
+        resultVo.setResult(result);
+        return resultVo;
     }
 
     /**

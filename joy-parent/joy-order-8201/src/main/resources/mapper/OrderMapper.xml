@@ -2,6 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.joy.mapper.OrderMapper">
 
+    <resultMap id="orderDetailMap" type="com.cy.joy.vo.OrderDetailVo">
+        <result property="orderDetailName" column="goods_name"/>
+        <result property="orderDetailNum" column="detail_num"/>
+        <result property="orderDetailPrice" column="detail_price"/>
+        <result property="orderDetailImg" column="goods_img"/>
+    </resultMap>
 
+    <insert id="setOrder">
+        insert into `order` (order_id,order_user,order_date,order_price,order_state,order_username,order_phone)
+        values (#{orderId},#{orderVo.orderUser.userId},now(),#{orderVo.orderTotalPrice},1,#{orderVo.orderUser.userName},#{orderVo.orderUser.userPhone})
+    </insert>
+
+    <insert id="setOrderDetail">
+        insert into `order_detail` (detail_order,detail_goods,detail_price,detail_num)
+        values (#{orderId},#{orderDetailVo.orderDetailGoodId},#{orderDetailVo.orderDetailPrice},#{orderDetailVo.orderDetailNum})
+    </insert>
+
+    <update id="payFinished">
+        update `order` set order_state = 2
+    </update>
+
+    <select id="getOrderPrice" resultType="double">
+        select order_price from `order` where order_id = #{orderId}
+    </select>
+
+    <select id="getDetail" resultMap="orderDetailMap">
+        select b.goods_name,a.detail_num,a.detail_price,b.goods_img from order_detail a
+        inner join goods b on a.detail_goods = b.goods_id
+        where a.detail_order = #{orderId}
+    </select>
 
 </mapper>

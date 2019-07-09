@@ -32,4 +32,11 @@ public interface UsersMapper {
      */
     void recoverUser(@Param("openId") String openId);
 
+    /**
+     * 根据id获取用户
+     * @param userId
+     * @return
+     */
+    Users get(@Param("userId") Integer userId);
+
 }

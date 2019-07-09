@@ -17,6 +17,15 @@ eureka:
     instance-id: joy-gateway-9527
     prefer-ip-address: true
 
+#负载均衡配置
+ribbon:
+  ConnectTimeout: 30000
+  ReadTimeout: 120000
+  OkToRetryOnAllOperations: true
+  MaxAutoRetriesNextServer: 2
+  MaxAutoRetries: 1
+
+#熔断的延迟时间
 hystrix:
   command:
     default:
@@ -24,13 +33,6 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 600000
-
-ribbon:
-  ConnectTimeout: 30000 # 连接超时时间(ms)
-  ReadTimeout: 120000 # 通信超时时间(ms)
-  OkToRetryOnAllOperations: true # 是否对所有操作重试
-  MaxAutoRetriesNextServer: 1 # 同一服务不同实例的重试次数
-  MaxAutoRetries: 1 # 同一实例的重试次数
 
 zuul:
   retryable: true
@@ -56,3 +58,12 @@ info:
   company.name: www.cy.com
   build.artifactId: $project.artifactId$
   build.version: $project.version$
+
+#自定义内容
+sc:
+  jwt:
+    pubKeyPath: D:/rsa/rsa.pub # 公钥地址
+  filter:
+    allowPaths:
+      - /wxCallBack
+      - /list
